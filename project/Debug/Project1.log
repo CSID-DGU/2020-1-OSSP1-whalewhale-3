@@ -1,0 +1,2 @@
+﻿  소스.cpp
+c:\users\jsw\documents\visual studio 2015\projects\project1\소스.cpp(3): fatal error C1083: 포함 파일을 열 수 없습니다. 'opencv2/core.hpp': No such file or directory
