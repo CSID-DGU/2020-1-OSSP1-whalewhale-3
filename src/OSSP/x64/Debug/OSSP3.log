@@ -59,13 +59,13 @@ C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(173,66): warning C4244: '인�
           [
               _Tp=float
           ]
-C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(303,19): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(313,14): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(302,19): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(312,14): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               _Ty=double
           ]
-C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(317,16): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(316,16): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               _Ty=double

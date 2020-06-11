@@ -17,7 +17,7 @@ using namespace std;
 const int LOOP_NUM = 10;
 const int GOOD_PTS_MAX = 30;
 const float GOOD_PORTION = 0.15f;
-const int NUM_IMG = 36;
+const int NUM_IMG = 10;
 int64 work_begin = 0;
 int64 work_end = 0;
 
@@ -231,7 +231,7 @@ int main(int argc, char* argv[])
 	/*csv(테스트라 작품명만)내용을 1,2...jpg에 순서대로 p.title에 저장
 	p.image에는 이미지가, name에는 파일명(xx.jpg)이 저장*/
 	for (int i = 0; i < NUM_IMG; i++) {
-		getline(fs, str_buf, ',');
+		getline(fs, str_buf, '\n');
 		string painting_name = to_string(i+1) + ".jpg";	
 		p.image = imread("img/" + painting_name, IMREAD_COLOR);
 		p.title = str_buf;
@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
 			area_ = getArea(corner[0].x, corner[1].x, corner[2].x, corner[3].x,
 				corner[0].y, corner[1].y, corner[2].y, corner[3].y);
 		}
-		else area_ = -2.5;
+		else area_ = -1;
 
 		std::cout << "Area is = " << area_ << std::endl;
 		area.push_back(area_);
@@ -352,6 +352,7 @@ int main(int argc, char* argv[])
 	line(img2, corner[2], corner[3], Scalar(255, 0, 0), 2, LINE_AA);
 	line(img2, corner[3], corner[0], Scalar(255, 0, 0), 2, LINE_AA);
 	imshow("draw square", img2);
+
 	
 	waitKey(0);
 	return EXIT_SUCCESS;
