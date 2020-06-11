@@ -1,0 +1,73 @@
+﻿  OSSP3.cpp
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(48,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(49,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(50,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(51,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(52,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(53,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(54,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(55,15): warning C4244: '인수': 'double'에서 'const _Ty'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(171,63): warning C4244: '인수': 'const int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(172,74): warning C4244: '인수': 'const int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(172,63): warning C4244: '인수': 'const int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(173,66): warning C4244: '인수': 'const int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(303,19): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(313,14): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\khd09\source\repos\OSSP3\OSSP3\OSSP3.cpp(317,16): warning C4244: '=': '_Ty'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Ty=double
+          ]
+  OSSP3.vcxproj -> C:\Users\khd09\source\repos\OSSP3\x64\Debug\OSSP3.exe
