@@ -15,10 +15,12 @@ using namespace cv::xfeatures2d;
 using namespace std;
 
 const int LOOP_NUM = 10;
+const int num_info = 7;
 const int GOOD_PTS_MAX = 30;
 const float GOOD_PORTION = 0.15f;
 const int NUM_IMG = 10;
 int64 work_begin = 0;
+
 int64 work_end = 0;
 
 static void workBegin()
@@ -36,9 +38,9 @@ static double getTime()
 	return work_end / ((double)getTickFrequency()) * 1000.;
 }
 
-//»ç°¢Çü ¸éÀû ±¸ÇÏ±â
-static double getArea(double x1, double x2, double x3, double x4, 
-					double y1, double y2, double y3, double y4) 
+//ì‚¬ê°í˜• ë©´ì  êµ¬í•˜ê¸°
+static double getArea(double x1, double x2, double x3, double x4,
+	double y1, double y2, double y3, double y4)
 {
 	long long sum = 0;
 	double ans;
@@ -65,10 +67,14 @@ static double getArea(double x1, double x2, double x3, double x4,
 	ans = sum / (double)2;
 	return abs(ans);
 }
-class Painting{
+class Painting {
 public:
 	string name;
 	string title;
+	string material;
+	string location;
+	string madein;
+	string born_death;
 	Mat image;
 	vector<Point> points;
 };
@@ -78,14 +84,14 @@ struct SURFDetector
 	Ptr<Feature2D> surf;
 	SURFDetector(double hessian = 800.0)
 	{
-		surf = SURF::create(hessian); //800.0 = Hessian matrixÀÇ determinant¸¦ °Å¸£´Â ±âÁØ°ª
+		surf = SURF::create(hessian); //800.0 = Hessian matrixì˜ determinantë¥¼ ê±°ë¥´ëŠ” ê¸°ì¤€ê°’
 	}
 	template<class T>
 	void operator()(const T& in, const T& mask, std::vector<cv::KeyPoint>& pts, T& descriptors, bool useProvided = false)
-	//ÀÌ¹ÌÁö, ¸¶½ºÅ©, Æ¯Â¡Á¡(keypoint), ±â¼úÀÚ(descriptors)Çü¼º
+		//ì´ë¯¸ì§€, ë§ˆìŠ¤í¬, íŠ¹ì§•ì (keypoint), ê¸°ìˆ ì(descriptors)í˜•ì„±
 	{
 		surf->detectAndCompute(in, mask, pts, descriptors, useProvided);
-	}//features2dÀÇ detectAndCompute
+	}//features2dì˜ detectAndCompute
 };
 
 template<class KPMatcher>
@@ -96,10 +102,10 @@ struct SURFMatcher
 	void match(const T& in1, const T& in2, std::vector<cv::DMatch>& matches)
 	{
 		matcher.match(in1, in2, matches);
-	}//ÀÌ¹ÌÁö1,ÀÌ¹ÌÁö2ÀÇ match(DMatchÅ¬·¡½º = ¿©·¯ ¿µ»ó¿¡¼­ ÃßÃâÇÑ Æ¯Â¡Á¡»çÀÌÀÇ ¸ÅÄª Á¤º¸¸¦ Ç¥½Ã)
+	}//ì´ë¯¸ì§€1,ì´ë¯¸ì§€2ì˜ match(DMatchí´ë˜ìŠ¤ = ì—¬ëŸ¬ ì˜ìƒì—ì„œ ì¶”ì¶œí•œ íŠ¹ì§•ì ì‚¬ì´ì˜ ë§¤ì¹­ ì •ë³´ë¥¼ í‘œì‹œ)
 };
 
-//Mat:Çà·Ä(Matrix)±¸Á¶Ã¼, ÀÌ¹ÌÁö¸¦ MatÇüÅÂ·Î º¯È¯ÇÏ¿© ÀĞ¾îµéÀÎ´Ù.
+//Mat:í–‰ë ¬(Matrix)êµ¬ì¡°ì²´, ì´ë¯¸ì§€ë¥¼ Matí˜•íƒœë¡œ ë³€í™˜í•˜ì—¬ ì½ì–´ë“¤ì¸ë‹¤.
 static Mat drawGoodMatches(
 	const Mat& img1,
 	const Mat& img2,
@@ -108,24 +114,24 @@ static Mat drawGoodMatches(
 	std::vector<DMatch>& matches,
 	std::vector<Point2f>& scene_corners_,
 	std::vector<Point2f>& area_corners_
-	//PointÅ¬·¡½º: 2dÁÂÇ¥¸¦ Ç¥ÇöÇÏ´Â ÅÛÇÃ¸´ Å¬·¡½º(¸â¹öº¯¼ö x,y)
+	//Pointí´ë˜ìŠ¤: 2dì¢Œí‘œë¥¼ í‘œí˜„í•˜ëŠ” í…œí”Œë¦¿ í´ë˜ìŠ¤(ë©¤ë²„ë³€ìˆ˜ x,y)
 )
 {
 	//-- Sort matches and preserve top 10% matches
 	std::sort(matches.begin(), matches.end());
-	//sort:matches¹è¿­À» ¿À¸§Â÷¼ø(distance°¡ ÀÛÀº ¼ø)À¸·Î Á¤·Ä
+	//sort:matchesë°°ì—´ì„ ì˜¤ë¦„ì°¨ìˆœ(distanceê°€ ì‘ì€ ìˆœ)ìœ¼ë¡œ ì •ë ¬
 	std::vector< DMatch > good_matches;
 	double minDist = matches.front().distance;
 	double maxDist = matches.back().distance;
-	//distance:descriptor°£ÀÇ °£°İ, ÀÛÀ»¼ö·Ï ÁÁ´Ù
+	//distance:descriptorê°„ì˜ ê°„ê²©, ì‘ì„ìˆ˜ë¡ ì¢‹ë‹¤
 
 	const int ptsPairs = std::min(GOOD_PTS_MAX, (int)(matches.size() * GOOD_PORTION));
-	//point pairs °³¼ö¸¦ matches size*GOOD_PORTION°¡ 30ÀÌ»óÀÌ¸é 30À¸·Î ±× ÀÌÇÏ¸é ±× °ªÀ¸·Î
+	//point pairs ê°œìˆ˜ë¥¼ matches size*GOOD_PORTIONê°€ 30ì´ìƒì´ë©´ 30ìœ¼ë¡œ ê·¸ ì´í•˜ë©´ ê·¸ ê°’ìœ¼ë¡œ
 	for (int i = 0; i < ptsPairs; i++)
 	{
 		good_matches.push_back(matches[i]);
 	}
-	//push_back(a):¸¶Áö¸· ¿ø¼Ò µÚ¿¡ a»ğÀÔ
+	//push_back(a):ë§ˆì§€ë§‰ ì›ì†Œ ë’¤ì— aì‚½ì…
 	std::cout << "\nMax distance: " << maxDist << std::endl;
 	std::cout << "Min distance: " << minDist << std::endl;
 
@@ -137,12 +143,12 @@ static Mat drawGoodMatches(
 
 	drawMatches(img1, keypoints1, img2, keypoints2,
 		good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
-		//Scalar Å¬·¡½º:4°³ÀÇ ¿ä¼Ò¸¦ °®´Â´Ù
+		//Scalar í´ë˜ìŠ¤:4ê°œì˜ ìš”ì†Œë¥¼ ê°–ëŠ”ë‹¤
 		std::vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-	/*drawMatches : Æ¯Â¡Á¡À» ¼±À¸·Î ¿¬°áÇØÁÖ´Â ÇÔ¼ö
-	DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS : drawMatches()ÇÔ¼ö¿Í ÇÔ²²»ç¿ë,
-	¸ÅÄªµÇÁö¾ÊÀº Æ¯Â¡Á¡Àº ±×¸®Áö ¾Ê´Â´Ù.
-	DEFAULT, DRAW_OVER_OUTFIT, DRAW_RICH_KEYPOINTS±â´Éµµ ÀÖÀ½*/
+	/*drawMatches : íŠ¹ì§•ì ì„ ì„ ìœ¼ë¡œ ì—°ê²°í•´ì£¼ëŠ” í•¨ìˆ˜
+	DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS : drawMatches()í•¨ìˆ˜ì™€ í•¨ê»˜ì‚¬ìš©,
+	ë§¤ì¹­ë˜ì§€ì•Šì€ íŠ¹ì§•ì ì€ ê·¸ë¦¬ì§€ ì•ŠëŠ”ë‹¤.
+	DEFAULT, DRAW_OVER_OUTFIT, DRAW_RICH_KEYPOINTSê¸°ëŠ¥ë„ ìˆìŒ*/
 
 
 	//-- Localize the object
@@ -155,7 +161,7 @@ static Mat drawGoodMatches(
 		obj.push_back(keypoints1[good_matches[i].queryIdx].pt);
 		scene.push_back(keypoints2[good_matches[i].trainIdx].pt);
 	}
-	/*queryIdx:±âÁØÀÌ¹ÌÁöÀÇ keypointÀÇ index, trainIdx:ºñ±³ÀÌ¹ÌÁöÀÇ keypointÀÇ index
+	/*queryIdx:ê¸°ì¤€ì´ë¯¸ì§€ì˜ keypointì˜ index, trainIdx:ë¹„êµì´ë¯¸ì§€ì˜ keypointì˜ index
 	.pt:*/
 	//-- Get the corners from the image_1 ( the object to be "detected" )
 	std::vector<Point2f> obj_corners(4);
@@ -174,7 +180,7 @@ static Mat drawGoodMatches(
 
 	Mat H = findHomography(obj, scene, RANSAC);
 	perspectiveTransform(obj_corners, scene_corners, H);
-	//sceneÀÇ corner4°³¿¡ objÀÇ 4°³ÀÇ corner¸¦ ´ëÀÀ  
+	//sceneì˜ corner4ê°œì— objì˜ 4ê°œì˜ cornerë¥¼ ëŒ€ì‘  
 	scene_corners_ = scene_corners;
 	area_corners_ = area_corners;
 
@@ -200,16 +206,16 @@ static Mat drawGoodMatches(
 // use cpu findHomography interface to calculate the transformation matrix
 int main(int argc, char* argv[])
 {
-	//img2 : ÂïÀº »çÁø, img1 : ºñ±³ÇÒ ±×¸²µé, img3 : img1Áß ¼±ÅÃµÈ ÀÌ¹ÌÁö
+	//img2 : ì°ì€ ì‚¬ì§„, img1 : ë¹„êµí•  ê·¸ë¦¼ë“¤, img3 : img1ì¤‘ ì„ íƒëœ ì´ë¯¸ì§€
 	UMat img1, img2, img3;
-	
+
 	std::string outpath = "output.jpg";
 	/*std::string leftName = "object.jpg";
 	imread(leftName, IMREAD_COLOR).copyTo(img1);
 	if (img1.empty())
 	{
-		std::cout << "Couldn't load " << leftName << std::endl;
-		return EXIT_FAILURE;
+	std::cout << "Couldn't load " << leftName << std::endl;
+	return EXIT_FAILURE;
 	}*/
 
 	std::string rightName = "scene.jpg";
@@ -221,23 +227,61 @@ int main(int argc, char* argv[])
 	}
 
 	double surf_time = 0.;
-	string str_buf;
+	
+
+	//////////////////////////////////////////////////////////////////////////////
 
 	std::vector<Painting> paintings;
 	Painting p;
 	std::fstream fs;
 	fs.open("GOGH Vincent van.csv", ios::in);
 
-	/*csv(Å×½ºÆ®¶ó ÀÛÇ°¸í¸¸)³»¿ëÀ» 1,2...jpg¿¡ ¼ø¼­´ë·Î p.title¿¡ ÀúÀå
-	p.image¿¡´Â ÀÌ¹ÌÁö°¡, name¿¡´Â ÆÄÀÏ¸í(xx.jpg)ÀÌ ÀúÀå*/
+	/*csv(í…ŒìŠ¤íŠ¸ë¼ ì‘í’ˆëª…ë§Œ)ë‚´ìš©ì„ 1,2...jpgì— ìˆœì„œëŒ€ë¡œ p.titleì— ì €ì¥
+	p.imageì—ëŠ” ì´ë¯¸ì§€ê°€, nameì—ëŠ” íŒŒì¼ëª…(xx.jpg)ì´ ì €ì¥*/
+	int num_info = 8;
+	string *str_buf = new string[num_info];
+
+	/*csv(í…ŒìŠ¤íŠ¸ë¼ ì‘í’ˆëª…ë§Œ)ë‚´ìš©ì„ 1,2...jpgì— ìˆœì„œëŒ€ë¡œ p.titleì— ì €ì¥
+	p.imageì—ëŠ” ì´ë¯¸ì§€ê°€, nameì—ëŠ” íŒŒì¼ëª…(xx.jpg)ì´ ì €ì¥*/
 	for (int i = 0; i < NUM_IMG; i++) {
-		getline(fs, str_buf, '\n');
-		string painting_name = to_string(i+1) + ".jpg";	
+		//getline(fs, str_buf, '\n');
+		string painting_name = to_string(i + 1) + ".jpg";
 		p.image = imread("img/" + painting_name, IMREAD_COLOR);
-		p.title = str_buf;
-		p.name = painting_name;
+		for (int j = 0; j < num_info; j++) {
+			getline(fs, str_buf[j], ',');
+			switch (j) {
+			case 0:
+				p.name = str_buf[0];
+				break;
+			case 1:
+				p.born_death = str_buf[1];
+				break;
+			case 2:
+				p.title = str_buf[2];
+				break;
+			case 3:
+				p.madein = str_buf[3];
+				break;
+			case 4:
+				p.material = str_buf[4];
+				break;
+			case 5:
+				p.location = str_buf[5];
+				break;
+			default:
+				getline(fs, str_buf[j], '\n');
+				break;
+
+			}
+		}
 		paintings.push_back(p);
+		cout << "painted by : " << p.name << p.born_death << endl 
+			<< "title : " << p.title << endl << "made in : " << p.madein << endl 
+			<< "material : " << p.material << endl << "location : " << p.location << endl << endl;
 	}
+
+	//////////////////////////////////////////////////////////////////////////////
+
 	//declare input/output
 	std::vector<KeyPoint> keypoints1, keypoints2;
 	std::vector<DMatch> matches;
@@ -259,12 +303,12 @@ int main(int argc, char* argv[])
 	float area_;
 	float max;
 	float x_min, x_max, y_min, y_max;
-	
+
 	workBegin();
 
-	/*k max(¿©±â¼­ 10)Àº ºñ±³ÇÒ ±×¸² °³¼ö
-	(Å×½ºÆ®¶ó 10°³¸¸, ³ªÁß¿¡ ÆÄÀÏ ¼Ó ÀÌ¹ÌÁö ¼ö ³ªÅ¸³»´Â ÇÔ¼ö·Î ¼öÁ¤)
-	»ç°¢Çü ¸éÀû(area)ÀÌ Á¦ÀÏ Å« ÀÌ¹ÌÁö¸¦ ÀÏÄ¡ÇÏ´Â ±×¸²ÀÌ¶ó º¸°í ±× ±×¸²ÀÌ ÀúÀåµÈ index·Î Ãâ·Â*/
+	/*k max(ì—¬ê¸°ì„œ 10)ì€ ë¹„êµí•  ê·¸ë¦¼ ê°œìˆ˜
+	(í…ŒìŠ¤íŠ¸ë¼ 10ê°œë§Œ, ë‚˜ì¤‘ì— íŒŒì¼ ì† ì´ë¯¸ì§€ ìˆ˜ ë‚˜íƒ€ë‚´ëŠ” í•¨ìˆ˜ë¡œ ìˆ˜ì •)
+	ì‚¬ê°í˜• ë©´ì (area)ì´ ì œì¼ í° ì´ë¯¸ì§€ë¥¼ ì¼ì¹˜í•˜ëŠ” ê·¸ë¦¼ì´ë¼ ë³´ê³  ê·¸ ê·¸ë¦¼ì´ ì €ì¥ëœ indexë¡œ ì¶œë ¥*/
 	for (int k = 0; k < NUM_IMG; k++) {
 		paintings[k].image.copyTo(img1);
 
@@ -298,7 +342,7 @@ int main(int argc, char* argv[])
 			x_min < corner[3].x + Point2f((float)img1.cols, 0).x &&
 			x_max > corner[3].x + Point2f((float)img1.cols, 0).x &&
 			y_min < corner[3].y + Point2f((float)img1.cols, 0).y &&
-			y_max > corner[3].y + Point2f((float)img1.cols, 0).y){
+			y_max > corner[3].y + Point2f((float)img1.cols, 0).y) {
 			area_ = getArea(corner[0].x, corner[1].x, corner[2].x, corner[3].x,
 				corner[0].y, corner[1].y, corner[2].y, corner[3].y);
 		}
@@ -308,9 +352,9 @@ int main(int argc, char* argv[])
 		area.push_back(area_);
 		printf("%d", k);
 	}
-	//areaÀ» 0¹øºÎÅÍ ºñ±³ÇØ¼­ indexÃ£±â
+	//areaì„ 0ë²ˆë¶€í„° ë¹„êµí•´ì„œ indexì°¾ê¸°
 	max = area[0];
-	
+
 	for (int i = 0; i < NUM_IMG; i++) {
 		if (area[i] > max) {
 			max = area[i];
@@ -324,10 +368,9 @@ int main(int argc, char* argv[])
 	}
 	printf("index is : %d\n", index);
 
-	//°áÁ¤µÈ painting[index]ÀÇ ÀÌ¹ÌÁö¸¦ img3¿¡ ³Ö°í °á°ú Ãâ·Â
+	//ê²°ì •ëœ painting[index]ì˜ ì´ë¯¸ì§€ë¥¼ img3ì— ë„£ê³  ê²°ê³¼ ì¶œë ¥
 	paintings[index].image.copyTo(img3);
-	
-	
+
 	surf(img3.getMat(ACCESS_READ), Mat(), keypoints1, descriptors1);
 	surf(img2.getMat(ACCESS_READ), Mat(), keypoints2, descriptors2);
 	matcher.match(descriptors1, descriptors2, matches);
@@ -346,14 +389,15 @@ int main(int argc, char* argv[])
 	imshow("surf matches", img_matches);
 	imwrite(outpath, img_matches);
 
-	
+	cout << "painted by : " << p.name << p.born_death << endl <<
+		"title : " << p.title << endl << "made in : " << p.madein << endl << "material : " << p.material << endl << "location : " << p.location << endl << endl;
+
 	line(img2, corner[0], corner[1], Scalar(255, 0, 0), 2, LINE_AA);
 	line(img2, corner[1], corner[2], Scalar(255, 0, 0), 2, LINE_AA);
 	line(img2, corner[2], corner[3], Scalar(255, 0, 0), 2, LINE_AA);
 	line(img2, corner[3], corner[0], Scalar(255, 0, 0), 2, LINE_AA);
 	imshow("draw square", img2);
 
-	
 	waitKey(0);
 	return EXIT_SUCCESS;
 }
