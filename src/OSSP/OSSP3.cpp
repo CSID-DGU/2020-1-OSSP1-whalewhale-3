@@ -18,7 +18,7 @@ const int LOOP_NUM = 10;
 const int num_info = 7;
 const int GOOD_PTS_MAX = 30;
 const float GOOD_PORTION = 0.15f;
-const int NUM_IMG = 10;
+const int NUM_IMG = 37;
 int64 work_begin = 0;
 
 int64 work_end = 0;
@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < NUM_IMG; i++) {
 		//getline(fs, str_buf, '\n');
 		string painting_name = to_string(i + 1) + ".jpg";
-		p.image = imread("img/" + painting_name, IMREAD_COLOR);
+		p.image = imread("img1/" + painting_name, IMREAD_COLOR);
 		for (int j = 0; j < num_info; j++) {
 			getline(fs, str_buf[j], ',');
 			switch (j) {
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 		paintings.push_back(p);
 		cout << "painted by : " << p.name << p.born_death << endl 
 			<< "title : " << p.title << endl << "made in : " << p.madein << endl 
-			<< "material : " << p.material << endl << "location : " << p.location << endl << endl;
+			<< "material : " << p.material << endl << "location : " << p.location << endl << i<< endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
