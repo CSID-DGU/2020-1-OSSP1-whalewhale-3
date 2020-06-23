@@ -52,7 +52,9 @@ Develop Tool : Visual Studio 2019(C++), OpenCV(ver.3.4.1ver)
 
 ## 6. 실행 화면
 
-
+![output](https://user-images.githubusercontent.com/62579567/85410383-fac81480-b5a1-11ea-8ab4-6c256b2e1464.jpg)
+![실행결과](https://user-images.githubusercontent.com/62579567/85410387-fbf94180-b5a1-11ea-9251-bdeec731d824.jpg)
+카메라로 명화를 찍은 이미지를 인식하여 이미지 데이터와 매칭이 되는 것을 확인 할 수 있다.
 
 
 ## 7. 사용 오픈소스
