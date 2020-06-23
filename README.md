@@ -38,9 +38,21 @@ Develop Tool : Visual Studio 2019(C++), OpenCV(ver.3.4.1ver)
 
  1) opencv 설치
     - 3.4.1 버전으로 설치
+         - 비주얼 스튜디오 2019의 64비트를 이용했는데 처음 install때 opencv_world부분에서 계속 오류(protoc 버전이 낮음으로 인해)가 나서 world기능을 빼고 다시 시도했지만 가장 중요한 모듈인 xfeatures2d부분에서 또 오류가 났다. 원인은 추가 종속성에서 xfeatures2dxxxd.lib를 넣어주지 않아서였다. xxx는 opencv의 버전으로 처음에 가장 최신 버젼인 4.3.0으로 설치했다가 오류의 원인을 찾기 위해 버젼을 3.4.1로 낮췄다.
+         
+  2) opencv_contrib를 다운
+      - 3.4.1 버전으로 다운
+     
+  3) cmake 설치
+     - SIFT를 지원하는 opencv 버전에 추가 기능(Xfeatures2d등)을 제공하는 opencv_contrib를 camke프로그램으로 추가한다.
+     
+  4) 설정하기 
+      - https://webnautes.tistory.com/1329 영상을 참조하여 버전 설정만 3.4.1로 수정하여 설정한다.
 
 
 ## 6. 실행 화면
+
+
 
 
 ## 7. 사용 오픈소스
