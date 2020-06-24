@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Windows.h>
 #include <fstream>
 #include "opencv2/core.hpp"
 #include "opencv2/core/utility.hpp"
@@ -55,7 +56,6 @@ static double getArea(double x1, double x2, double x3, double x4,
 		Y.push_back(y2);
 		Y.push_back(y3);
 		Y.push_back(y4);
-
 	}
 	X.push_back(X.front());
 	Y.push_back(Y.front());
@@ -206,6 +206,8 @@ static Mat drawGoodMatches(
 // use cpu findHomography interface to calculate the transformation matrix
 int main(int argc, char* argv[])
 {
+	//string tempName;
+	
 	//img2 : 찍은 사진, img1 : 비교할 그림들, img3 : img1중 선택된 이미지
 	UMat img1, img2, img3;
 
@@ -218,7 +220,9 @@ int main(int argc, char* argv[])
 	return EXIT_FAILURE;
 	}*/
 
-	std::string rightName = "scene2.jpg";
+	std::string rightName;
+	cout << "type image file name with jpg : ";
+	cin >> rightName;
 	imread(rightName, IMREAD_COLOR).copyTo(img2);
 
 	if (img2.empty())
@@ -377,6 +381,17 @@ int main(int argc, char* argv[])
 			break;
 		}
 	}
+
+	//사진을 못 찾는 경우, area가 너무 작으면 일치하지 않는것
+	if (area[index] <= 1000) {
+		for (int i = 0; i < 5; i++)
+			cout << endl;
+		cout << "cannot find data" << endl;
+		exit(1);
+	}
+
+
+
 	printf("\nindex is : %d\n", index);
 
 	//결정된 painting의 index를 통해 원본 이미지로 대체 후 img3에 넣고 결과 출력
@@ -402,7 +417,10 @@ int main(int argc, char* argv[])
 	imshow("surf matches", img_matches);
 	imwrite(outpath, img_matches);
 
-	cout << "painted by : " << p.name << p.born_death << endl <<
+	for (int i = 0; i < 5; i++)
+		cout << endl;
+
+	cout << "result" << endl << endl << endl << endl << "painted by : " << p.name << p.born_death << endl <<
 		"title : " << p.title << endl << "made in : " << p.madein << endl << "material : " << p.material << endl << "location : " << p.location << endl << endl;
 
 	/**
